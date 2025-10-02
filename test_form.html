@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Purchase Form</title>
+</head>
+<body>
+  <h2>Test Purchase Form</h2>
+  <p>This form simulates a purchase on justsimpletrading.org. Fill it out and submit to test tracking.</p>
+  <form id="purchaseForm">
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" required placeholder="e.g., test@example.com"><br><br>
+    <label for="amount">Amount ($):</label><br>
+    <input type="number" id="amount" step="0.01" value="99.99" required><br><br>
+    <button type="submit">Submit Purchase</button>
+  </form>
+  <div id="result"></div>
+  <script>
+    document.getElementById('purchaseForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const revenue = parseFloat(document.getElementById('amount').value);
+      const resultDiv = document.getElementById('result');
+      
+      fetch('http://127.0.0.1:5000/track-purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, revenue, source: 'website_form' })
+      })
+      .then(response => response.json())
+      .then(data => {
+        resultDiv.innerHTML = `<p style="color: green;"><strong>${data.message}</strong></p>`;
+        console.log('Success:', data);  // Check browser console for details
+      })
+      .catch(error => {
+        resultDiv.innerHTML = `<p style="color: red;"><strong>Error: ${error.message}</strong></p>`;
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
