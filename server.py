@@ -73,5 +73,23 @@ def track_purchase():
     else:
         return jsonify({'status': 'error', 'message': 'Failed to track purchase'}), 500
 
+@app.route('/track-lead', methods=['POST'])
+def track_lead():
+    """Endpoint to track a registration/lead from the website."""
+    data = request.json
+    email = data.get('email', 'unknown@example.com')
+    source = data.get('source', 'website_test')
+
+    event_data = {
+        'email': email,
+        'revenue': 0,  # Leads have $0 revenue
+        'type': 'lead',
+        'source': source
+    }
+    if post_to_hyros(event_data):
+        return jsonify({'status': 'success', 'message': f'Lead tracked for {email}'}), 200
+    else:
+        return jsonify({'status': 'error', 'message': 'Failed to track lead'}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
